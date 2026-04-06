@@ -250,6 +250,31 @@ footer p {
   line-height: 1.6;
 }
 
+.oss-credits {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #444;
+}
+
+.oss-credits summary {
+  cursor: pointer;
+  color: #555;
+}
+
+.oss-credits ul {
+  list-style: none;
+  margin-top: 8px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oss-credits a {
+  color: #888;
+  text-decoration: underline;
+}
+
 .hidden {
   display: none !important;
 }
