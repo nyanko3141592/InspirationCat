@@ -20,6 +20,7 @@ const controls = document.getElementById('controls')!
 const downloadBtn = document.getElementById('download-btn')!
 const shareBtn = document.getElementById('share-btn')!
 const resetBtn = document.getElementById('reset-btn')!
+const tweetBtn = document.getElementById('tweet-btn')!
 const sampleSection = document.getElementById('sample-section')!
 const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
 const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
@@ -168,6 +169,17 @@ shareBtn.addEventListener('click', async () => {
       console.error(err)
     }
   }
+})
+
+// Tweet to X
+tweetBtn.addEventListener('click', () => {
+  const text = encodeURIComponent('閃いた！💡\n\n#InspirationCat')
+  const url = encodeURIComponent('https://inspiration-cat.pages.dev')
+  window.open(
+    `https://x.com/intent/post?text=${text}&url=${url}`,
+    '_blank',
+    'width=550,height=420'
+  )
 })
 
 function showToast(message: string) {
