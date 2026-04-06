@@ -41,6 +41,20 @@ header h1 {
   margin-top: 4px;
 }
 
+/* Sample */
+.sample-section {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.sample-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+}
+
 /* Upload Area */
 .upload-area {
   border: 2px dashed #444;

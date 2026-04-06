@@ -20,6 +20,7 @@ const controls = document.getElementById('controls')!
 const downloadBtn = document.getElementById('download-btn')!
 const shareBtn = document.getElementById('share-btn')!
 const resetBtn = document.getElementById('reset-btn')!
+const sampleSection = document.getElementById('sample-section')!
 const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
 const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
 
@@ -191,12 +192,14 @@ resetBtn.addEventListener('click', () => {
   scaleSlider.value = '0.7'
   rotationSlider.value = '0'
   fileInput.value = ''
+  sampleSection.classList.remove('hidden')
   uploadArea.classList.remove('hidden')
   previewSection.classList.add('hidden')
   controls.classList.add('hidden')
 })
 
 async function processImage(file: File) {
+  sampleSection.classList.add('hidden')
   uploadArea.classList.add('hidden')
   previewSection.classList.remove('hidden')
   processing.classList.remove('hidden')
