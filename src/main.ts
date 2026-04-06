@@ -8,6 +8,7 @@ let bgImg: HTMLImageElement | null = null
 let subjectX = 0.5
 let subjectY = 0.7
 let subjectScale = 0.7
+let subjectRotation = 0 // degrees
 
 const canvas = document.getElementById('result-canvas') as HTMLCanvasElement
 const uploadArea = document.getElementById('upload-area')!
@@ -20,6 +21,7 @@ const downloadBtn = document.getElementById('download-btn')!
 const shareBtn = document.getElementById('share-btn')!
 const resetBtn = document.getElementById('reset-btn')!
 const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
+const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
 
 // Preload background image
 function loadBgImage(): Promise<HTMLImageElement> {
@@ -125,6 +127,12 @@ scaleSlider.addEventListener('input', () => {
   if (subjectImg) renderResult(subjectImg)
 })
 
+// Rotation slider
+rotationSlider.addEventListener('input', () => {
+  subjectRotation = parseFloat(rotationSlider.value)
+  if (subjectImg) renderResult(subjectImg)
+})
+
 // Download
 downloadBtn.addEventListener('click', () => {
   const link = document.createElement('a')
@@ -179,7 +187,9 @@ resetBtn.addEventListener('click', () => {
   subjectX = 0.5
   subjectY = 0.7
   subjectScale = 0.7
+  subjectRotation = 0
   scaleSlider.value = '0.7'
+  rotationSlider.value = '0'
   fileInput.value = ''
   uploadArea.classList.remove('hidden')
   previewSection.classList.add('hidden')
@@ -214,7 +224,9 @@ async function processImage(file: File) {
       subjectX = 0.5
       subjectY = 0.7
       subjectScale = 0.7
+      subjectRotation = 0
       scaleSlider.value = '0.7'
+      rotationSlider.value = '0'
       renderResult(img)
       processing.classList.add('hidden')
       controls.classList.remove('hidden')
@@ -253,7 +265,11 @@ function renderResult(img: HTMLImageElement) {
     drawH = maxDim
     drawW = maxDim * aspectRatio
   }
-  const drawX = subjectX * canvas.width - drawW / 2
-  const drawY = subjectY * canvas.height - drawH / 2
-  ctx.drawImage(img, drawX, drawY, drawW, drawH)
+  const centerX = subjectX * canvas.width
+  const centerY = subjectY * canvas.height
+  ctx.save()
+  ctx.translate(centerX, centerY)
+  ctx.rotate((subjectRotation * Math.PI) / 180)
+  ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH)
+  ctx.restore()
 }
