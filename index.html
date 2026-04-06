@@ -34,14 +34,15 @@
 
         <!-- Controls -->
         <div id="controls" class="controls hidden">
-          <div class="style-picker">
-            <button class="style-btn active" data-style="yellow">☀️ 黄色</button>
-            <button class="style-btn" data-style="blue">💎 青</button>
-            <button class="style-btn" data-style="pink">🌸 ピンク</button>
+          <div class="slider-row">
+            <label for="scale-slider">サイズ</label>
+            <input type="range" id="scale-slider" min="0.2" max="1.5" step="0.05" value="0.7" />
           </div>
+          <p class="hint">ドラッグで動物の位置を調整できます</p>
           <div class="action-buttons">
+            <button id="share-btn" class="btn btn-share">📤 シェア</button>
             <button id="download-btn" class="btn btn-primary">💾 保存</button>
-            <button id="reset-btn" class="btn btn-secondary">🔄 やり直す</button>
+            <button id="reset-btn" class="btn btn-secondary">🔄</button>
           </div>
         </div>
       </main>
