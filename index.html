@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>InspirationCat - 閃きアニマルメーカー</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>💡 InspirationCat</h1>
+        <p class="subtitle">動物の写真から「閃いた！」画像をつくろう</p>
+      </header>
+
+      <main>
+        <!-- Upload Area -->
+        <div id="upload-area" class="upload-area">
+          <input type="file" id="file-input" accept="image/*" hidden />
+          <div class="upload-content">
+            <span class="upload-icon">📸</span>
+            <p>タップして動物の写真を選択</p>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div id="preview-section" class="preview-section hidden">
+          <canvas id="result-canvas"></canvas>
+          <div id="processing" class="processing hidden">
+            <div class="spinner"></div>
+            <p id="processing-text">背景を除去中...</p>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div id="controls" class="controls hidden">
+          <div class="style-picker">
+            <button class="style-btn active" data-style="yellow">☀️ 黄色</button>
+            <button class="style-btn" data-style="blue">💎 青</button>
+            <button class="style-btn" data-style="pink">🌸 ピンク</button>
+          </div>
+          <div class="action-buttons">
+            <button id="download-btn" class="btn btn-primary">💾 保存</button>
+            <button id="reset-btn" class="btn btn-secondary">🔄 やり直す</button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
