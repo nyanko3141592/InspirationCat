@@ -9,7 +9,7 @@
     <!-- OGP -->
     <meta property="og:title" content="InspirationCat - 閃きアニマルメーカー" />
     <meta property="og:description" content="動物の写真をアップロードするだけ！背景を自動で除去して「閃いた！」風の画像を作れるツール。すべてブラウザ内で完結、サーバー送信なし。" />
-    <meta property="og:image" content="https://inspiration-cat.pages.dev/sample.png" />
+    <meta property="og:image" content="https://inspiration-cat.pages.dev/sample.webp" />
     <meta property="og:url" content="https://inspiration-cat.pages.dev" />
     <meta property="og:type" content="website" />
 
@@ -17,7 +17,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="InspirationCat - 閃きアニマルメーカー" />
     <meta name="twitter:description" content="動物の写真から「閃いた！」画像をつくろう💡 すべてローカル処理で安心" />
-    <meta name="twitter:image" content="https://inspiration-cat.pages.dev/sample.png" />
+    <meta name="twitter:image" content="https://inspiration-cat.pages.dev/sample.webp" />
   </head>
   <body>
     <div id="app">
@@ -29,7 +29,10 @@
       <main>
         <!-- Sample -->
         <div id="sample-section" class="sample-section">
-          <img src="/sample.png" alt="サンプル画像" class="sample-img" />
+          <picture>
+            <source srcset="/sample.webp" type="image/webp" />
+            <img src="/sample.png" alt="サンプル画像" class="sample-img" />
+          </picture>
         </div>
 
         <!-- Upload Area -->
@@ -60,8 +63,9 @@
             <label for="rotation-slider">回転</label>
             <input type="range" id="rotation-slider" min="-180" max="180" step="1" value="0" />
           </div>
-          <p class="hint">ドラッグで動物の位置を調整</p>
+          <p id="hint-text" class="hint">ドラッグで動物の位置を調整</p>
           <div class="action-buttons">
+            <button id="flip-btn" class="btn btn-secondary" title="左右反転">↔</button>
             <button id="tweet-btn" class="btn btn-tweet"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> ポスト</button>
             <button id="share-btn" class="btn btn-share">📤 シェア</button>
             <button id="download-btn" class="btn btn-primary">💾 保存</button>
@@ -75,9 +79,9 @@
         <details class="oss-credits">
           <summary>オープンソースライセンス</summary>
           <ul>
-            <li><a href="https://github.com/nicehash/background-removal-js" target="_blank" rel="noopener">@imgly/background-removal</a> — AGPL-3.0 License<br />Copyright &copy; IMG.LY GmbH<br />本サイトのソースコードは<a href="https://github.com/nyanko3141592/InspirationCat" target="_blank" rel="noopener">GitHub</a>で公開しています。</li>
+            <li><a href="https://github.com/imgly/background-removal-js" target="_blank" rel="noopener">@imgly/background-removal</a> — AGPL-3.0 License<br />Copyright &copy; IMG.LY GmbH<br />本サイトのソースコードは<a href="https://github.com/nyanko3141592/InspirationCat" target="_blank" rel="noopener">GitHub</a>で公開しています。</li>
             <li><a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener">ONNX Runtime Web</a> — MIT License<br />Copyright &copy; Microsoft Corporation</li>
-            <li><a href="https://github.com/nicehash/vite" target="_blank" rel="noopener">Vite</a> — MIT License<br />Copyright &copy; Evan You</li>
+            <li><a href="https://github.com/vitejs/vite" target="_blank" rel="noopener">Vite</a> — MIT License<br />Copyright &copy; Evan You</li>
           </ul>
         </details>
       </footer>

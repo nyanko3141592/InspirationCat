@@ -9,6 +9,7 @@ let subjectX = 0.5
 let subjectY = 0.7
 let subjectScale = 0.7
 let subjectRotation = 0 // degrees
+let subjectFlipped = false
 
 const canvas = document.getElementById('result-canvas') as HTMLCanvasElement
 const uploadArea = document.getElementById('upload-area')!
@@ -21,17 +22,30 @@ const downloadBtn = document.getElementById('download-btn')!
 const shareBtn = document.getElementById('share-btn')!
 const resetBtn = document.getElementById('reset-btn')!
 const tweetBtn = document.getElementById('tweet-btn')!
+const flipBtn = document.getElementById('flip-btn')!
 const sampleSection = document.getElementById('sample-section')!
 const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
 const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
+const hintText = document.getElementById('hint-text')!
 
-// Preload background image
+// Set device-appropriate hint text
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+hintText.textContent = isTouchDevice
+  ? 'スライドで位置調整・ピンチでサイズ変更'
+  : 'ドラッグで動物の位置を調整'
+
+// Preload background image (WebP with PNG fallback)
 function loadBgImage(): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => resolve(img)
-    img.onerror = reject
-    img.src = '/bg.png'
+    img.onerror = () => {
+      const fallback = new Image()
+      fallback.onload = () => resolve(fallback)
+      fallback.onerror = reject
+      fallback.src = '/bg.png'
+    }
+    img.src = '/bg.webp'
   })
 }
 
@@ -60,6 +74,20 @@ uploadArea.addEventListener('drop', (e) => {
   const file = e.dataTransfer?.files[0]
   if (file?.type.startsWith('image/')) processImage(file)
 })
+
+// --- RAF throttling ---
+let renderScheduled = false
+function scheduleRender() {
+  if (renderScheduled) return
+  renderScheduled = true
+  requestAnimationFrame(() => {
+    renderScheduled = false
+    if (subjectImg) renderResult(subjectImg)
+  })
+}
+
+// --- Canvas size tracking (set once, clear with clearRect) ---
+let canvasSized = false
 
 // Dragging subject on canvas
 let isDragging = false
@@ -91,7 +119,7 @@ window.addEventListener('mousemove', (e) => {
   const pos = getCanvasPos(e)
   subjectX = dragStartSubjectX + (pos.x - dragStartX)
   subjectY = dragStartSubjectY + (pos.y - dragStartY)
-  if (subjectImg) renderResult(subjectImg)
+  scheduleRender()
 })
 
 window.addEventListener('mouseup', () => {
@@ -99,48 +127,118 @@ window.addEventListener('mouseup', () => {
   canvas.style.cursor = 'grab'
 })
 
-// Touch support
+// --- Touch: single-finger drag + pinch zoom/rotate ---
+let lastPinchDist = 0
+let lastPinchAngle = 0
+let isPinching = false
+
+function getTouchDistance(t1: Touch, t2: Touch) {
+  const dx = t1.clientX - t2.clientX
+  const dy = t1.clientY - t2.clientY
+  return Math.sqrt(dx * dx + dy * dy)
+}
+
+function getTouchAngle(t1: Touch, t2: Touch) {
+  return Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * (180 / Math.PI)
+}
+
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault()
-  isDragging = true
-  const pos = getCanvasPos(e.touches[0])
-  dragStartX = pos.x
-  dragStartY = pos.y
-  dragStartSubjectX = subjectX
-  dragStartSubjectY = subjectY
+  if (e.touches.length === 2) {
+    // Pinch start
+    isPinching = true
+    isDragging = false
+    lastPinchDist = getTouchDistance(e.touches[0], e.touches[1])
+    lastPinchAngle = getTouchAngle(e.touches[0], e.touches[1])
+  } else if (e.touches.length === 1) {
+    isDragging = true
+    isPinching = false
+    const pos = getCanvasPos(e.touches[0])
+    dragStartX = pos.x
+    dragStartY = pos.y
+    dragStartSubjectX = subjectX
+    dragStartSubjectY = subjectY
+  }
 }, { passive: false })
 
 canvas.addEventListener('touchmove', (e) => {
   e.preventDefault()
-  if (!isDragging) return
-  const pos = getCanvasPos(e.touches[0])
-  subjectX = dragStartSubjectX + (pos.x - dragStartX)
-  subjectY = dragStartSubjectY + (pos.y - dragStartY)
-  if (subjectImg) renderResult(subjectImg)
+  if (isPinching && e.touches.length === 2) {
+    // Pinch zoom
+    const dist = getTouchDistance(e.touches[0], e.touches[1])
+    const scaleDelta = dist / lastPinchDist
+    subjectScale = Math.max(0.05, Math.min(3, subjectScale * scaleDelta))
+    scaleSlider.value = String(subjectScale)
+    lastPinchDist = dist
+
+    // Pinch rotate
+    const angle = getTouchAngle(e.touches[0], e.touches[1])
+    const angleDelta = angle - lastPinchAngle
+    subjectRotation = ((subjectRotation + angleDelta + 180) % 360) - 180
+    rotationSlider.value = String(Math.round(subjectRotation))
+    lastPinchAngle = angle
+
+    scheduleRender()
+  } else if (isDragging && e.touches.length === 1) {
+    const pos = getCanvasPos(e.touches[0])
+    subjectX = dragStartSubjectX + (pos.x - dragStartX)
+    subjectY = dragStartSubjectY + (pos.y - dragStartY)
+    scheduleRender()
+  }
 }, { passive: false })
 
-canvas.addEventListener('touchend', () => {
-  isDragging = false
+canvas.addEventListener('touchend', (e) => {
+  if (e.touches.length < 2) isPinching = false
+  if (e.touches.length === 0) isDragging = false
 })
 
 // Scale slider
 scaleSlider.addEventListener('input', () => {
   subjectScale = parseFloat(scaleSlider.value)
-  if (subjectImg) renderResult(subjectImg)
+  scheduleRender()
 })
 
 // Rotation slider
 rotationSlider.addEventListener('input', () => {
   subjectRotation = parseFloat(rotationSlider.value)
-  if (subjectImg) renderResult(subjectImg)
+  scheduleRender()
+})
+
+// Flip button
+flipBtn.addEventListener('click', () => {
+  subjectFlipped = !subjectFlipped
+  scheduleRender()
 })
 
 // Download
-downloadBtn.addEventListener('click', () => {
-  const link = document.createElement('a')
-  link.download = 'inspiration-animal.png'
-  link.href = canvas.toDataURL('image/png')
-  link.click()
+downloadBtn.addEventListener('click', async () => {
+  try {
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((b) => resolve(b!), 'image/png')
+    })
+    const file = new File([blob], 'inspiration-animal.png', { type: 'image/png' })
+
+    // Mobile: use Web Share API if available (most reliable on iOS/Android)
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'InspirationCat',
+      })
+      return
+    }
+
+    // Desktop / fallback: use object URL for download
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.download = 'inspiration-animal.png'
+    link.href = url
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch (err) {
+    if ((err as Error).name !== 'AbortError') {
+      console.error(err)
+    }
+  }
 })
 
 // Share
@@ -159,10 +257,21 @@ shareBtn.addEventListener('click', async () => {
       })
     } else {
       // Fallback: copy to clipboard
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob }),
-      ])
-      showToast('クリップボードにコピーしました')
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob }),
+        ])
+        showToast('クリップボードにコピーしました')
+      } catch {
+        // iOS Safari clipboard fallback: trigger download instead
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.download = 'inspiration-animal.png'
+        link.href = url
+        link.click()
+        URL.revokeObjectURL(url)
+        showToast('画像をダウンロードしました')
+      }
     }
   } catch (err) {
     if ((err as Error).name !== 'AbortError') {
@@ -177,8 +286,7 @@ tweetBtn.addEventListener('click', () => {
   const url = encodeURIComponent('https://inspiration-cat.pages.dev')
   window.open(
     `https://x.com/intent/post?text=${text}&url=${url}`,
-    '_blank',
-    'width=550,height=420'
+    '_blank'
   )
 })
 
@@ -201,14 +309,44 @@ resetBtn.addEventListener('click', () => {
   subjectY = 0.7
   subjectScale = 0.7
   subjectRotation = 0
+  subjectFlipped = false
   scaleSlider.value = '0.7'
   rotationSlider.value = '0'
   fileInput.value = ''
+  canvasSized = false
   sampleSection.classList.remove('hidden')
   uploadArea.classList.remove('hidden')
   previewSection.classList.add('hidden')
   controls.classList.add('hidden')
 })
+
+// Resize image before processing to avoid memory issues on mobile
+function resizeImageFile(file: File, maxDim: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      if (img.width <= maxDim && img.height <= maxDim) {
+        // Already small enough
+        resolve(file)
+        return
+      }
+      const scale = maxDim / Math.max(img.width, img.height)
+      const w = Math.round(img.width * scale)
+      const h = Math.round(img.height * scale)
+      const c = document.createElement('canvas')
+      c.width = w
+      c.height = h
+      const ctx = c.getContext('2d')!
+      ctx.drawImage(img, 0, 0, w, h)
+      c.toBlob(
+        (blob) => (blob ? resolve(blob) : reject(new Error('Resize failed'))),
+        'image/png'
+      )
+    }
+    img.onerror = reject
+    img.src = URL.createObjectURL(file)
+  })
+}
 
 async function processImage(file: File) {
   sampleSection.classList.add('hidden')
@@ -222,9 +360,14 @@ async function processImage(file: File) {
       bgImg = await loadBgImage()
     }
 
+    processingText.textContent = '画像を準備中...'
+
+    // Resize large images to prevent memory issues
+    const resized = await resizeImageFile(file, 1024)
+
     processingText.textContent = '背景を除去中...（初回は少し時間がかかります）'
 
-    const blob = await removeBackground(file, {
+    const blob = await removeBackground(resized, {
       progress: (key: string, current: number, total: number) => {
         if (key === 'compute:inference') {
           const pct = Math.round((current / total) * 100)
@@ -240,8 +383,10 @@ async function processImage(file: File) {
       subjectY = 0.7
       subjectScale = 0.7
       subjectRotation = 0
+      subjectFlipped = false
       scaleSlider.value = '0.7'
       rotationSlider.value = '0'
+      canvasSized = false
       renderResult(img)
       processing.classList.add('hidden')
       controls.classList.remove('hidden')
@@ -250,23 +395,36 @@ async function processImage(file: File) {
     img.src = URL.createObjectURL(blob)
   } catch (err) {
     console.error(err)
-    processingText.textContent = 'エラーが発生しました。もう一度お試しください。'
+    const message = (err as Error)?.message || ''
+    if (message.includes('memory') || message.includes('alloc')) {
+      processingText.textContent = 'メモリ不足です。小さい画像でお試しください。'
+    } else if (message.includes('network') || message.includes('fetch')) {
+      processingText.textContent = 'ネットワークエラーです。接続を確認してください。'
+    } else {
+      processingText.textContent = 'エラーが発生しました。もう一度お試しください。'
+    }
     setTimeout(() => {
       processing.classList.add('hidden')
       previewSection.classList.add('hidden')
+      sampleSection.classList.remove('hidden')
       uploadArea.classList.remove('hidden')
-    }, 2000)
+    }, 2500)
   }
 }
 
 function renderResult(img: HTMLImageElement) {
   if (!bgImg) return
-  // Use background image's native size
-  canvas.width = bgImg.width
-  canvas.height = bgImg.height
   const ctx = canvas.getContext('2d')!
 
-  // Draw background image as-is (no cropping)
+  // Set canvas size only once per image session
+  if (!canvasSized) {
+    canvas.width = bgImg.width
+    canvas.height = bgImg.height
+    canvasSized = true
+  }
+
+  // Clear and draw background
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.drawImage(bgImg, 0, 0)
 
   // Draw subject
@@ -285,6 +443,7 @@ function renderResult(img: HTMLImageElement) {
   ctx.save()
   ctx.translate(centerX, centerY)
   ctx.rotate((subjectRotation * Math.PI) / 180)
+  if (subjectFlipped) ctx.scale(-1, 1)
   ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH)
   ctx.restore()
 }
