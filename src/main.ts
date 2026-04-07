@@ -304,6 +304,7 @@ function showToast(message: string) {
 
 // Reset
 resetBtn.addEventListener('click', () => {
+  if (!confirm('やり直しますか？')) return
   subjectImg = null
   subjectX = 0.5
   subjectY = 0.7
