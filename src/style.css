@@ -25,11 +25,11 @@ body {
 
 header {
   text-align: center;
-  padding: 16px 0 24px;
+  padding: 12px 0 16px;
 }
 
 header h1 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   background: linear-gradient(135deg, #ffd700, #ff8c00);
   -webkit-background-clip: text;
@@ -38,9 +38,9 @@ header h1 {
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: #888;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 /* Sample */
@@ -140,124 +140,135 @@ header h1 {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .slider-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .slider-row label {
-  font-size: 14px;
-  color: #aaa;
+  font-size: 12px;
+  color: #777;
   white-space: nowrap;
+  width: 32px;
 }
 
-/* Custom range slider for better touch targets */
 .slider-row input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   flex: 1;
-  height: 44px;
+  height: 32px;
   background: transparent;
   cursor: pointer;
 }
 
 .slider-row input[type="range"]::-webkit-slider-runnable-track {
-  height: 6px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .slider-row input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   background: #ffd700;
   border-radius: 50%;
   border: none;
-  margin-top: -11px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  margin-top: -8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .slider-row input[type="range"]::-moz-range-track {
-  height: 6px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
+  border-radius: 2px;
   border: none;
 }
 
 .slider-row input[type="range"]::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   background: #ffd700;
   border-radius: 50%;
   border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hint {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #555;
   text-align: center;
+  margin: 2px 0;
 }
 
 .action-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+  align-items: center;
 }
 
-.btn {
-  padding: 14px;
+.btn-icon {
+  width: 40px;
+  height: 40px;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.2s;
-  min-height: 48px;
-}
-
-.btn:active {
-  transform: scale(0.96);
-}
-
-.btn-tweet {
-  flex: 1;
-  min-width: 0;
-  background: #000;
-  color: #fff;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+}
+
+.btn {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-tweet {
+  width: 40px;
+  flex-shrink: 0;
+  background: #000;
+  color: #fff;
   border: 1px solid #333;
 }
 
 .btn-share {
   flex: 1;
-  min-width: 0;
   background: linear-gradient(135deg, #00b4d8, #0077b6);
   color: #fff;
 }
 
 .btn-primary {
   flex: 1;
-  min-width: 0;
   background: linear-gradient(135deg, #ffd700, #ff8c00);
   color: #1a1a2e;
-}
-
-.btn-secondary {
-  width: 52px;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
 }
 
 /* Toast */
