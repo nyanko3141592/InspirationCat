@@ -18,7 +18,7 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - run: npm install
       - run: npm run build
 
       - uses: cloudflare/wrangler-action@v3
