@@ -207,44 +207,47 @@ header h1 {
   margin: 2px 0;
 }
 
-.action-buttons {
+.edit-tools {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
 .btn-icon {
-  width: 40px;
-  height: 40px;
+  padding: 6px 14px;
   border: none;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  font-size: 18px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #999;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-icon:active {
   transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.output-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .btn {
-  padding: 10px 12px;
+  flex: 1;
+  padding: 12px 8px;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  height: 40px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
 
 .btn:active {
@@ -252,21 +255,17 @@ header h1 {
 }
 
 .btn-tweet {
-  width: 40px;
-  flex-shrink: 0;
   background: #000;
   color: #fff;
   border: 1px solid #333;
 }
 
 .btn-share {
-  flex: 1;
   background: linear-gradient(135deg, #00b4d8, #0077b6);
   color: #fff;
 }
 
 .btn-primary {
-  flex: 1;
   background: linear-gradient(135deg, #ffd700, #ff8c00);
   color: #1a1a2e;
 }

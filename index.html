@@ -64,12 +64,14 @@
             <input type="range" id="rotation-slider" min="-180" max="180" step="1" value="0" />
           </div>
           <p id="hint-text" class="hint">ドラッグで位置調整・ピンチでサイズ変更</p>
-          <div class="action-buttons">
-            <button id="flip-btn" class="btn-icon" title="左右反転">↔</button>
-            <button id="reset-btn" class="btn-icon" title="やり直す">🔄</button>
-            <button id="tweet-btn" class="btn btn-tweet"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></button>
+          <div class="edit-tools">
+            <button id="flip-btn" class="btn-icon" title="左右反転">↔ 反転</button>
+            <button id="reset-btn" class="btn-icon" title="やり直す">🔄 リセット</button>
+          </div>
+          <div class="output-actions">
+            <button id="tweet-btn" class="btn btn-tweet"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> ポスト</button>
             <button id="share-btn" class="btn btn-share">シェア</button>
-            <button id="download-btn" class="btn btn-primary">保存</button>
+            <button id="download-btn" class="btn btn-primary">💾 保存</button>
           </div>
         </div>
       </main>
