@@ -4,6 +4,8 @@
 
 背景除去からエフェクト合成まで、すべてブラウザ内で完結。サーバーへの画像送信は一切ありません。
 
+作った画像をシェアするときは **#InspirationCat** をつけてもらえると嬉しいです！
+
 **https://inspiration-cat.pages.dev**
 
 ![サンプル](public/sample.png)

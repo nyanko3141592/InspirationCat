@@ -216,7 +216,7 @@ downloadBtn.addEventListener('click', async () => {
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
-    const file = new File([blob], 'inspiration-animal.png', { type: 'image/png' })
+    const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
 
     // Mobile: use Web Share API if available (most reliable on iOS/Android)
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
@@ -230,7 +230,7 @@ downloadBtn.addEventListener('click', async () => {
     // Desktop / fallback: use object URL for download
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.download = 'inspiration-animal.png'
+    link.download = 'InspirationCat.png'
     link.href = url
     link.click()
     URL.revokeObjectURL(url)
@@ -247,7 +247,7 @@ shareBtn.addEventListener('click', async () => {
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
-    const file = new File([blob], 'inspiration-animal.png', { type: 'image/png' })
+    const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
 
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       await navigator.share({
@@ -266,7 +266,7 @@ shareBtn.addEventListener('click', async () => {
         // iOS Safari clipboard fallback: trigger download instead
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')
-        link.download = 'inspiration-animal.png'
+        link.download = 'InspirationCat.png'
         link.href = url
         link.click()
         URL.revokeObjectURL(url)
