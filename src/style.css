@@ -364,6 +364,22 @@ header h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+/* Inspiration Reference */
+.inspiration-reference {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.inspiration-label {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.inspiration-reference .twitter-tweet {
+  margin: 0 auto !important;
+}
+
 /* Footer */
 footer {
   margin-top: auto;
