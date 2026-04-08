@@ -351,6 +351,11 @@ function resizeImageFile(file: File, maxDim: number): Promise<Blob> {
   })
 }
 
+function isMemoryError(err: unknown): boolean {
+  const message = (err as Error)?.message || ''
+  return message.includes('memory') || message.includes('alloc')
+}
+
 async function processImage(file: File) {
   sampleSection.classList.add('hidden')
   uploadArea.classList.add('hidden')
@@ -363,21 +368,35 @@ async function processImage(file: File) {
       bgImg = await loadBgImage()
     }
 
-    processingText.textContent = '画像を準備中...'
+    const sizes = [1024, 768, 512]
+    let blob: Blob | null = null
 
-    // Resize large images to prevent memory issues
-    const resized = await resizeImageFile(file, 1024)
+    for (let i = 0; i < sizes.length; i++) {
+      try {
+        processingText.textContent = '画像を準備中...'
+        const resized = await resizeImageFile(file, sizes[i])
 
-    processingText.textContent = '背景を除去中...（初回は少し時間がかかります）'
+        processingText.textContent = i === 0
+          ? '背景を除去中...（初回は少し時間がかかります）'
+          : `画像を縮小して再処理中...（${sizes[i]}px）`
 
-    const blob = await removeBackground(resized, {
-      progress: (key: string, current: number, total: number) => {
-        if (key === 'compute:inference') {
-          const pct = Math.round((current / total) * 100)
-          processingText.textContent = `処理中... ${pct}%`
+        blob = await removeBackground(resized, {
+          progress: (key: string, current: number, total: number) => {
+            if (key === 'compute:inference') {
+              const pct = Math.round((current / total) * 100)
+              processingText.textContent = `処理中... ${pct}%`
+            }
+          },
+        })
+        break
+      } catch (err) {
+        if (isMemoryError(err) && i < sizes.length - 1) {
+          console.warn(`Memory error at ${sizes[i]}px, retrying at ${sizes[i + 1]}px`)
+          continue
         }
-      },
-    })
+        throw err
+      }
+    }
 
     const img = new Image()
     img.onload = () => {
@@ -395,12 +414,12 @@ async function processImage(file: File) {
       controls.classList.remove('hidden')
       canvas.style.cursor = 'grab'
     }
-    img.src = URL.createObjectURL(blob)
+    img.src = URL.createObjectURL(blob!)
   } catch (err) {
     console.error(err)
     const message = (err as Error)?.message || ''
     if (message.includes('memory') || message.includes('alloc')) {
-      processingText.textContent = 'メモリ不足です。小さい画像でお試しください。'
+      processingText.textContent = 'メモリ不足で処理できませんでした。ブラウザのタブを閉じてから再度お試しください。'
     } else if (message.includes('network') || message.includes('fetch')) {
       processingText.textContent = 'ネットワークエラーです。接続を確認してください。'
     } else {
