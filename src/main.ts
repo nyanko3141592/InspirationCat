@@ -27,6 +27,7 @@ const sampleSection = document.getElementById('sample-section')!
 const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
 const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
 const hintText = document.getElementById('hint-text')!
+const dragGuide = document.getElementById('drag-guide')!
 
 // Set device-appropriate hint text
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
@@ -75,6 +76,24 @@ uploadArea.addEventListener('drop', (e) => {
   if (file?.type.startsWith('image/')) processImage(file)
 })
 
+// --- Drag guide ---
+let dragGuideTimer: ReturnType<typeof setTimeout> | null = null
+
+function showDragGuide() {
+  dragGuide.classList.remove('hidden', 'fade-out')
+  if (dragGuideTimer) clearTimeout(dragGuideTimer)
+  dragGuideTimer = setTimeout(dismissDragGuide, 3000)
+}
+
+function dismissDragGuide() {
+  if (dragGuide.classList.contains('hidden')) return
+  if (dragGuideTimer) { clearTimeout(dragGuideTimer); dragGuideTimer = null }
+  dragGuide.classList.add('fade-out')
+  dragGuide.addEventListener('animationend', () => {
+    dragGuide.classList.add('hidden')
+  }, { once: true })
+}
+
 // --- RAF throttling ---
 let renderScheduled = false
 function scheduleRender() {
@@ -106,6 +125,7 @@ function getCanvasPos(e: MouseEvent | Touch) {
 
 canvas.addEventListener('mousedown', (e) => {
   isDragging = true
+  dismissDragGuide()
   const pos = getCanvasPos(e)
   dragStartX = pos.x
   dragStartY = pos.y
@@ -144,6 +164,7 @@ function getTouchAngle(t1: Touch, t2: Touch) {
 
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault()
+  dismissDragGuide()
   if (e.touches.length === 2) {
     // Pinch start
     isPinching = true
@@ -413,6 +434,7 @@ async function processImage(file: File) {
       processing.classList.add('hidden')
       controls.classList.remove('hidden')
       canvas.style.cursor = 'grab'
+      showDragGuide()
     }
     img.src = URL.createObjectURL(blob!)
   } catch (err) {
