@@ -216,28 +216,15 @@ downloadBtn.addEventListener('click', async () => {
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
-    const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
 
-    // Mobile: use Web Share API if available (most reliable on iOS/Android)
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: 'InspirationCat',
-      })
-      return
-    }
-
-    // Desktop / fallback: use object URL for download
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.download = 'InspirationCat.png'
     link.href = url
     link.click()
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
   } catch (err) {
-    if ((err as Error).name !== 'AbortError') {
-      console.error(err)
-    }
+    console.error(err)
   }
 })
 
