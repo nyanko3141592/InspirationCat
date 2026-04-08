@@ -28,12 +28,23 @@ const scaleSlider = document.getElementById('scale-slider') as HTMLInputElement
 const rotationSlider = document.getElementById('rotation-slider') as HTMLInputElement
 const hintText = document.getElementById('hint-text')!
 const dragGuide = document.getElementById('drag-guide')!
+const hashtagHint = document.getElementById('hashtag-hint')!
 
 // Set device-appropriate hint text
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 hintText.textContent = isTouchDevice
   ? 'スライドで位置調整・ピンチでサイズ変更'
   : 'ドラッグで動物の位置を調整'
+
+// Copy hashtag on tap
+hashtagHint.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText('#InspirationCat')
+    showToast('#InspirationCat をコピーしました')
+  } catch {
+    showToast('コピーできませんでした')
+  }
+})
 
 // Preload background image (WebP with PNG fallback)
 function loadBgImage(): Promise<HTMLImageElement> {

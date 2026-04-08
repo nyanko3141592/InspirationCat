@@ -286,6 +286,12 @@ header h1 {
   color: #888;
   text-align: center;
   margin: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.hashtag-hint:active {
+  color: #ffd700;
 }
 
 .hashtag-hint strong {
