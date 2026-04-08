@@ -393,6 +393,21 @@ footer p {
   line-height: 1.6;
 }
 
+.creator {
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.creator a {
+  color: #ffd700;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.creator a:hover {
+  text-decoration: underline;
+}
+
 .oss-credits {
   margin-top: 12px;
   font-size: 11px;
