@@ -210,13 +210,23 @@ flipBtn.addEventListener('click', () => {
   scheduleRender()
 })
 
-// Download
+// Download (save)
 downloadBtn.addEventListener('click', async () => {
   try {
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
 
+    if (isTouchDevice) {
+      // Mobile: Web Share API for save (allows "Save to Files", AirDrop, etc.)
+      const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'InspirationCat' })
+        return
+      }
+    }
+
+    // Desktop / fallback: download via link
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.download = 'InspirationCat.png'
@@ -224,7 +234,9 @@ downloadBtn.addEventListener('click', async () => {
     link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   } catch (err) {
-    console.error(err)
+    if ((err as Error).name !== 'AbortError') {
+      console.error(err)
+    }
   }
 })
 
@@ -234,31 +246,34 @@ shareBtn.addEventListener('click', async () => {
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
-    const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
 
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: 'InspirationCat',
-        text: '閃いた！',
-      })
-    } else {
-      // Fallback: copy to clipboard
-      try {
-        await navigator.clipboard.write([
-          new ClipboardItem({ 'image/png': blob }),
-        ])
-        showToast('クリップボードにコピーしました')
-      } catch {
-        // iOS Safari clipboard fallback: trigger download instead
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.download = 'InspirationCat.png'
-        link.href = url
-        link.click()
-        URL.revokeObjectURL(url)
-        showToast('画像をダウンロードしました')
+    if (isTouchDevice) {
+      // Mobile: Web Share API for sharing to LINE, Instagram, etc.
+      const file = new File([blob], 'InspirationCat.png', { type: 'image/png' })
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'InspirationCat',
+          text: '閃いた！ #InspirationCat',
+        })
+        return
       }
+    }
+
+    // Desktop / fallback: copy to clipboard
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob }),
+      ])
+      showToast('クリップボードにコピーしました')
+    } catch {
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.download = 'InspirationCat.png'
+      link.href = url
+      link.click()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      showToast('画像をダウンロードしました')
     }
   } catch (err) {
     if ((err as Error).name !== 'AbortError') {
