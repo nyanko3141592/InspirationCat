@@ -436,15 +436,6 @@ footer p {
   line-height: 1.7;
 }
 
-.usage-note-tldr {
-  color: #888 !important;
-  font-weight: 600;
-}
-
-.usage-note-body strong {
-  color: #999;
-}
-
 .usage-note-body a {
   color: #888;
   text-decoration: underline;
