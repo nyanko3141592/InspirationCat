@@ -408,15 +408,46 @@ footer p {
   text-decoration: underline;
 }
 
+.usage-note,
 .oss-credits {
   margin-top: 12px;
   font-size: 11px;
   color: #444;
 }
 
+.usage-note summary,
 .oss-credits summary {
   cursor: pointer;
   color: #555;
+}
+
+.usage-note-body {
+  margin-top: 8px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.usage-note-body p {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.7;
+}
+
+.usage-note-tldr {
+  color: #888 !important;
+  font-weight: 600;
+}
+
+.usage-note-body strong {
+  color: #999;
+}
+
+.usage-note-body a {
+  color: #888;
+  text-decoration: underline;
 }
 
 .oss-credits ul {
